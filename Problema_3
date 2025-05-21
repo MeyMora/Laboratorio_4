@@ -1,0 +1,32 @@
+_start:
+    LDR R1, =0x1000    @ Cargar dirección de la tecla en R1
+    LDR R2, =0x2000    @ Cargar dirección del contador en R2
+
+    MOV R7, #0xE048   @ Simular que la tecla de flecha arriba fue presionada
+    STR R7, [R1]       @ Guardar el valor en la dirección de memoria 0x1000
+    LDRH R3, [R1]      @ Leer la tecla presionada para verificar la escritura
+
+loop:
+    LDRH R3, [R1]      @ Volver a leer la tecla en cada iteración
+    LDR R4, [R2]       @ Leer el valor actual del contador
+
+    LDR R5, =0xE048    @ Cargar valor de flecha arriba
+    LDR R6, =0xE050    @ Cargar valor de flecha abajo
+
+    CMP R3, R5         @ Comparar con flecha arribal
+    BEQ increase
+
+    CMP R3, R6         @ Comparar con flecha abajo
+    BEQ decrease
+
+    B loop              @ Si no es una tecla válida, repetir el bucle
+
+increase:
+    ADD R4, R4, #1      @ Incrementar el contador
+    STR R4, [R2]        @ Guardar el nuevo valor
+    B loop
+
+decrease:
+    SUB R4, R4, #1      @ Disminuir el contador
+    STR R4, [R2]        @ Guardar el nuevo valor
+    B loop
